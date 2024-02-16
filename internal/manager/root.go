@@ -18,8 +18,8 @@ func newRootCmd(customlogger *zerolog.Logger, exit func(int)) *rootCmd {
 	}
 
 	cmd := &cobra.Command{
-		Use:           "raccoon",
-		Short:         "Stupid simple Download Accelerator",
+		Use:           "ddacc",
+		Short:         "Download Accelerator",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
