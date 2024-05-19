@@ -1,10 +1,8 @@
-package tests
+package download
 
 import (
 	"os"
 	"testing"
-
-	"github.com/snwzt/raccoon/pkg/fileutil"
 )
 
 func TestCreateFile(t *testing.T) {
@@ -12,7 +10,7 @@ func TestCreateFile(t *testing.T) {
 	filename := "test.txt"
 	filePath := filedir + filename
 
-	file, _, err := fileutil.CreateFile("https://example.com/test.txt", filedir)
+	file, _, err := CreateFile("https://example.com/test.txt", filedir)
 	if err != nil {
 		t.Errorf("CreateFile Error: %s", err.Error())
 	}
@@ -22,7 +20,7 @@ func TestCreateFile(t *testing.T) {
 		t.Error("CreateFile did not create the file")
 	}
 
-	_, _, err = fileutil.CreateFile("https://example.com/test.txt", filedir)
+	_, _, err = CreateFile("https://example.com/test.txt", filedir)
 	if err == nil {
 		t.Error("No error for creating an already existing file")
 	}
@@ -42,7 +40,7 @@ func TestDeleteFile(t *testing.T) {
 
 	file.Close()
 
-	fileutil.DeleteFile(file.Name())
+	DeleteFile(file.Name())
 
 	_, err = os.Stat(filePath)
 	if !os.IsNotExist(err) {

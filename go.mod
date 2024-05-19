@@ -7,7 +7,6 @@ require (
 	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/rs/zerolog v1.32.0
-	github.com/snwzt/raccoon v0.0.0-20240119121223-e258d0e45d99
 	github.com/spf13/cobra v1.8.0
 )
 

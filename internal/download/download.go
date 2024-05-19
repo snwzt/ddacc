@@ -9,8 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"snwzt/ddacc/data"
-	"snwzt/ddacc/pkg/helper"
+	"snwzt/ddacc/internal/models"
 )
 
 type Download struct {
@@ -19,12 +18,12 @@ type Download struct {
 	Parts         [][2]int64
 	Client        *http.Client
 	File          *os.File
-	status        *data.Status
+	status        *models.Status
 	errChan       chan error
 	doneChan      chan bool
 }
 
-func NewDownloadInstance(ctx context.Context, url string, numParts int64, file *os.File, status *data.Status) (*Download, error) {
+func NewDownloadInstance(ctx context.Context, url string, numParts int64, file *os.File, status *models.Status) (*Download, error) {
 	resp, err := http.Head(url)
 	if err != nil {
 		return nil, err
@@ -121,7 +120,7 @@ func (dm *Download) worker(wg *sync.WaitGroup, segment [2]int64, parts *int64) {
 			dm.doneChan <- true
 			return
 		default:
-			n, err := helper.ReadWithTimeout(resp, buf, 10*time.Second)
+			n, err := ReadWithTimeout(resp, buf, 10*time.Second)
 			if err != nil && err != io.EOF {
 				dm.errChan <- err
 				dm.doneChan <- true

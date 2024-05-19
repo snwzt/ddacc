@@ -1,4 +1,4 @@
-package data
+package models
 
 type Status struct {
 	Name      string

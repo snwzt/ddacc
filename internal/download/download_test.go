@@ -1,14 +1,11 @@
-package tests
+package download
 
 import (
 	"context"
 	"os"
+	"snwzt/ddacc/internal/models"
 	"testing"
 	"time"
-
-	"snwzt/ddacc/data"
-	"snwzt/ddacc/pkg/download"
-	"snwzt/ddacc/pkg/fileutil"
 )
 
 func TestDownload(t *testing.T) {
@@ -18,17 +15,17 @@ func TestDownload(t *testing.T) {
 	filePath := dir + filename
 	connections := int64(4)
 
-	file, filename, _ := fileutil.CreateFile(url, dir)
+	file, filename, _ := CreateFile(url, dir)
 	defer file.Close()
 
-	status := []*data.Status{
+	status := []*models.Status{
 		{
 			Name:  filename,
 			Parts: make([]int64, connections),
 		},
 	}
 
-	downloader, err := download.NewDownloadInstance(context.Background(), url, connections, file, status[0])
+	downloader, err := NewDownloadInstance(context.Background(), url, connections, file, status[0])
 	if err != nil {
 		t.Errorf("download instance - %s", err.Error())
 	}
@@ -53,10 +50,10 @@ func TestDownloadCancellation(t *testing.T) {
 	filePath := dir + filename
 	connections := int64(4)
 
-	file, filename, _ := fileutil.CreateFile(url, dir)
+	file, filename, _ := CreateFile(url, dir)
 	defer file.Close()
 
-	status := []*data.Status{
+	status := []*models.Status{
 		{
 			Name:  filename,
 			Parts: make([]int64, connections),
@@ -65,7 +62,7 @@ func TestDownloadCancellation(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	downloader, err := download.NewDownloadInstance(ctx, url, connections, file, status[0])
+	downloader, err := NewDownloadInstance(ctx, url, connections, file, status[0])
 	if err != nil {
 		t.Errorf("download instance - %s", err.Error())
 	}

@@ -1,19 +1,19 @@
-package helper
+package download
 
 import (
 	"fmt"
 	"net/http"
 	"time"
 
-	"snwzt/ddacc/data"
+	"snwzt/ddacc/internal/models"
 )
 
 func ReadWithTimeout(resp *http.Response, buf []byte, timeout time.Duration) (int, error) {
-	resultChan := make(chan data.ReadData)
+	resultChan := make(chan models.ReadData)
 
 	go func() {
 		n, err := resp.Body.Read(buf)
-		resultChan <- data.ReadData{
+		resultChan <- models.ReadData{
 			N:   n,
 			Err: err,
 		}

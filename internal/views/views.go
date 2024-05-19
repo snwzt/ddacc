@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	models "snwzt/ddacc/data"
+	"snwzt/ddacc/internal/models"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"

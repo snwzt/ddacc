@@ -1,8 +1,8 @@
 build:
-	@go build -o bin/ddacc cmd/ddacc.go
+	@go build -o ddacc cmd/main.go
 
 test:
-	@go test -v ./tests/...
+	@go test -v ./... -cover
 
 clean:
 	@rm -rf bin

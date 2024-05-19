@@ -1,4 +1,4 @@
-package manager
+package cli
 
 import (
 	"context"
@@ -8,10 +8,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"snwzt/ddacc/data"
+	"snwzt/ddacc/internal/download"
+	"snwzt/ddacc/internal/models"
 	"snwzt/ddacc/internal/views"
-	"snwzt/ddacc/pkg/download"
-	"snwzt/ddacc/pkg/fileutil"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
@@ -43,7 +42,7 @@ func newURLCmd() *urlCmd {
 				root.opts.connections = 16
 			}
 
-			file, filename, err := fileutil.CreateFile(args[0], root.opts.directory)
+			file, filename, err := download.CreateFile(args[0], root.opts.directory)
 			if err != nil {
 				return err
 			}
@@ -54,7 +53,7 @@ func newURLCmd() *urlCmd {
 
 			ctx, cancel := context.WithCancel(context.Background())
 
-			status := []*data.Status{
+			status := []*models.Status{
 				{
 					Name:      filename,
 					Parts:     make([]int64, root.opts.connections),
@@ -80,7 +79,7 @@ func newURLCmd() *urlCmd {
 			downloader, err := download.NewDownloadInstance(ctx, args[0], root.opts.connections,
 				file, status[0])
 			if err != nil {
-				fileutil.DeleteFile(file.Name())
+				download.DeleteFile(file.Name())
 				return err
 			}
 
@@ -90,7 +89,7 @@ func newURLCmd() *urlCmd {
 
 				if err := downloader.Download(); err != nil {
 					errChan <- err
-					fileutil.DeleteFile(file.Name())
+					download.DeleteFile(file.Name())
 					return
 				}
 			}()

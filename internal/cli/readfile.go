@@ -1,4 +1,4 @@
-package manager
+package cli
 
 import (
 	"bytes"
@@ -9,10 +9,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"snwzt/ddacc/data"
+	"snwzt/ddacc/internal/download"
+	"snwzt/ddacc/internal/models"
 	"snwzt/ddacc/internal/views"
-	"snwzt/ddacc/pkg/download"
-	"snwzt/ddacc/pkg/fileutil"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
@@ -54,14 +53,14 @@ func newReadFileCmd() *readFileCmd {
 			errChan := make(chan error, len(lines)+1)
 			defer close(errChan)
 
-			status := make([]*data.Status, len(lines))
+			status := make([]*models.Status, len(lines))
 
 			ctx, cancel := context.WithCancel(context.Background())
 
 			var wg sync.WaitGroup
 
 			for idx, line := range lines {
-				status[idx] = &data.Status{}
+				status[idx] = &models.Status{}
 
 				wg.Add(1)
 				go fileInstance(&wg, ctx, status[idx], string(line), errChan, root.opts)
@@ -100,10 +99,10 @@ func newReadFileCmd() *readFileCmd {
 	return root
 }
 
-func fileInstance(wg *sync.WaitGroup, ctx context.Context, status *data.Status, url string, errChan chan error, opts readFileOpts) {
+func fileInstance(wg *sync.WaitGroup, ctx context.Context, status *models.Status, url string, errChan chan error, opts readFileOpts) {
 	defer wg.Done()
 
-	file, filename, err := fileutil.CreateFile(url, opts.directory)
+	file, filename, err := download.CreateFile(url, opts.directory)
 	if err != nil {
 		errChan <- err
 		return
@@ -117,13 +116,13 @@ func fileInstance(wg *sync.WaitGroup, ctx context.Context, status *data.Status, 
 	downloader, err := download.NewDownloadInstance(ctx, url, opts.connections, file, status)
 	if err != nil {
 		errChan <- err
-		fileutil.DeleteFile(file.Name())
+		download.DeleteFile(file.Name())
 		return
 	}
 
 	if err := downloader.Download(); err != nil {
 		errChan <- err
-		fileutil.DeleteFile(file.Name())
+		download.DeleteFile(file.Name())
 		return
 	}
 }

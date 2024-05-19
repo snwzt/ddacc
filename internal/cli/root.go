@@ -1,4 +1,4 @@
-package manager
+package cli
 
 import (
 	"github.com/rs/zerolog"
